@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const categoryFilters = document.querySelectorAll(".category-filter");
   const dayFilters = document.querySelectorAll(".day-filter");
   const timeFilters = document.querySelectorAll(".time-filter");
+  const difficultyFilters = document.querySelectorAll(".difficulty-filter");
 
   // Authentication elements
   const loginButton = document.getElementById("login-button");
@@ -48,12 +49,20 @@ document.addEventListener("DOMContentLoaded", () => {
     technology: { label: "Technology", color: "#e8eaf6", textColor: "#3949ab" },
   };
 
+  // Difficulty levels with corresponding colors
+  const difficultyLevels = {
+    Beginner: { color: "#c8e6c9", textColor: "#2e7d32" },
+    Intermediate: { color: "#fff9c4", textColor: "#f57f17" },
+    Advanced: { color: "#ffccbc", textColor: "#d84315" },
+  };
+
   // State for activities and filters
   let allActivities = {};
   let currentFilter = "all";
   let searchQuery = "";
   let currentDay = "";
   let currentTimeRange = "";
+  let currentDifficulty = "";
 
   // Authentication state
   let currentUser = null;
@@ -391,6 +400,11 @@ document.addEventListener("DOMContentLoaded", () => {
         queryParams.push(`day=${encodeURIComponent(currentDay)}`);
       }
 
+      // Handle difficulty filter
+      if (currentDifficulty) {
+        queryParams.push(`difficulty=${encodeURIComponent(currentDifficulty)}`);
+      }
+
       // Handle time range filter
       if (currentTimeRange) {
         const range = timeRanges[currentTimeRange];
@@ -525,6 +539,22 @@ document.addEventListener("DOMContentLoaded", () => {
       </span>
     `;
 
+    // Create difficulty tag if difficulty is specified
+    let difficultyTagHtml = "";
+    if (details.difficulty) {
+      if (difficultyLevels[details.difficulty]) {
+        const diffInfo = difficultyLevels[details.difficulty];
+        difficultyTagHtml = `
+          <span class="difficulty-tag" style="background-color: ${diffInfo.color}; color: ${diffInfo.textColor}">
+            ${details.difficulty}
+          </span>
+        `;
+      } else {
+        // Log warning for developers if invalid difficulty value is found
+        console.warn(`Invalid difficulty level for "${name}": "${details.difficulty}"`);
+      }
+    }
+
     // Create capacity indicator
     const capacityIndicator = `
       <div class="capacity-container ${capacityStatusClass}">
@@ -540,6 +570,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     activityCard.innerHTML = `
       ${tagHtml}
+      ${difficultyTagHtml}
       <h4>${name}</h4>
       <p>${details.description}</p>
       <p class="tooltip">
@@ -674,6 +705,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Update current time filter and fetch activities
       currentTimeRange = button.dataset.time;
+      fetchActivities();
+    });
+  });
+
+  // Add event listeners for difficulty filter buttons
+  difficultyFilters.forEach((button) => {
+    button.addEventListener("click", () => {
+      // Update active class
+      difficultyFilters.forEach((btn) => btn.classList.remove("active"));
+      button.classList.add("active");
+
+      // Update current difficulty filter and fetch activities
+      currentDifficulty = button.dataset.difficulty;
       fetchActivities();
     });
   });

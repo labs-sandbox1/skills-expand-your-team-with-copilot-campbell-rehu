@@ -272,19 +272,29 @@ section h3 {
   background-color: #fff9e6;
 }
 
-/* Activity Tag */
-.activity-tag {
+/* Activity and Difficulty Tag Shared Styles */
+.activity-tag,
+.difficulty-tag {
   position: absolute;
   top: 8px;
-  right: 8px;
-  background: #e8eaf6;
-  color: #3949ab;
   font-size: 0.65rem;
   font-weight: bold;
   padding: 2px 6px;
   border-radius: 10px;
   text-transform: uppercase;
   letter-spacing: 0.3px;
+}
+
+/* Activity Tag */
+.activity-tag {
+  right: 8px;
+  background: #e8eaf6;
+  color: #3949ab;
+}
+
+/* Difficulty Tag */
+.difficulty-tag {
+  left: 8px;
 }
 
 /* Capacity Indicator */
@@ -621,7 +631,8 @@ footer {
 
 .category-filters,
 .day-filters,
-.time-filters {
+.time-filters,
+.difficulty-filters {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
@@ -629,7 +640,8 @@ footer {
 
 .category-filter,
 .day-filter,
-.time-filter {
+.time-filter,
+.difficulty-filter {
   background-color: var(--background);
   border: 1px solid var(--border);
   color: var(--text-primary);
@@ -642,7 +654,8 @@ footer {
 
 .category-filter.active,
 .day-filter.active,
-.time-filter.active {
+.time-filter.active,
+.difficulty-filter.active {
   background-color: var(--primary);
   color: white;
   border-color: var(--primary-dark);
@@ -650,7 +663,8 @@ footer {
 
 .category-filter:hover,
 .day-filter:hover,
-.time-filter:hover {
+.time-filter:hover,
+.difficulty-filter:hover {
   background-color: var(--primary-light);
   color: white;
 }
