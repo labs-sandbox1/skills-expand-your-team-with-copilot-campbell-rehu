@@ -522,13 +522,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Create difficulty tag if difficulty is specified
     let difficultyTagHtml = "";
-    if (details.difficulty && difficultyLevels[details.difficulty]) {
-      const diffInfo = difficultyLevels[details.difficulty];
-      difficultyTagHtml = `
-        <span class="difficulty-tag" style="background-color: ${diffInfo.color}; color: ${diffInfo.textColor}">
-          ${details.difficulty}
-        </span>
-      `;
+    if (details.difficulty) {
+      if (difficultyLevels[details.difficulty]) {
+        const diffInfo = difficultyLevels[details.difficulty];
+        difficultyTagHtml = `
+          <span class="difficulty-tag" style="background-color: ${diffInfo.color}; color: ${diffInfo.textColor}">
+            ${details.difficulty}
+          </span>
+        `;
+      } else {
+        console.warn(`Activity "${name}" has invalid difficulty value: "${details.difficulty}". Valid values are: ${Object.keys(difficultyLevels).join(', ')}`);
+      }
     }
 
     // Create capacity indicator
