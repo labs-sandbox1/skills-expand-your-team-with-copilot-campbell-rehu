@@ -778,8 +778,16 @@ document.addEventListener("DOMContentLoaded", () => {
   // Handle social sharing
   function handleShare(event) {
     const button = event.currentTarget;
-    const activityName = button.dataset.activity;
-    const activityDescription = button.dataset.description;
+    // Get the encoded values from data attributes
+    const encodedActivityName = button.dataset.activity;
+    const encodedActivityDescription = button.dataset.description;
+    
+    // Decode HTML entities for display in share text
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = encodedActivityName;
+    const activityName = tempDiv.textContent;
+    tempDiv.innerHTML = encodedActivityDescription;
+    const activityDescription = tempDiv.textContent;
     
     // Create share URL (current page URL)
     const shareUrl = window.location.href;
@@ -801,7 +809,10 @@ document.addEventListener("DOMContentLoaded", () => {
       
       const anchor = document.createElement('a');
       anchor.href = mailtoLink;
+      anchor.style.display = 'none';
+      document.body.appendChild(anchor);
       anchor.click();
+      document.body.removeChild(anchor);
     }
   }
 
