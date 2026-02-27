@@ -571,13 +571,13 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
       <div class="share-buttons">
         <span class="share-label">Share:</span>
-        <button class="share-button share-facebook" data-activity="${name}" data-description="${details.description.replace(/"/g, '&quot;')}" title="Share on Facebook">
+        <button class="share-button share-facebook" data-activity="${name}" data-description="${details.description.replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}" title="Share on Facebook" aria-label="Share on Facebook">
           <span>📘</span>
         </button>
-        <button class="share-button share-twitter" data-activity="${name}" data-description="${details.description.replace(/"/g, '&quot;')}" title="Share on Twitter">
+        <button class="share-button share-twitter" data-activity="${name}" data-description="${details.description.replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}" title="Share on Twitter" aria-label="Share on Twitter">
           <span>🐦</span>
         </button>
-        <button class="share-button share-email" data-activity="${name}" data-description="${details.description.replace(/"/g, '&quot;')}" title="Share via Email">
+        <button class="share-button share-email" data-activity="${name}" data-description="${details.description.replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}" title="Share via Email" aria-label="Share via Email">
           <span>✉️</span>
         </button>
       </div>
@@ -776,9 +776,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const activityName = button.dataset.activity;
     const activityDescription = button.dataset.description;
     
+    // Sanitize the activity name and description to prevent XSS
+    const sanitizedName = activityName.replace(/[<>]/g, '');
+    const sanitizedDescription = activityDescription.replace(/[<>]/g, '');
+    
     // Create share URL (current page URL)
     const shareUrl = window.location.href;
-    const shareText = `Check out ${activityName} at Mergington High School: ${activityDescription}`;
+    const shareText = `Check out ${sanitizedName} at Mergington High School: ${sanitizedDescription}`;
     
     if (button.classList.contains('share-facebook')) {
       // Facebook share
@@ -790,7 +794,7 @@ document.addEventListener("DOMContentLoaded", () => {
       window.open(twitterUrl, '_blank', 'width=600,height=400');
     } else if (button.classList.contains('share-email')) {
       // Email share
-      const subject = encodeURIComponent(`Activity: ${activityName}`);
+      const subject = encodeURIComponent(`Activity: ${sanitizedName}`);
       const body = encodeURIComponent(`${shareText}\n\nView more at: ${shareUrl}`);
       window.location.href = `mailto:?subject=${subject}&body=${body}`;
     }
