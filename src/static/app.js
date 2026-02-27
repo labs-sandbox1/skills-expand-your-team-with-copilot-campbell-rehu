@@ -30,11 +30,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const themeIcon = document.getElementById("theme-icon");
 
   // Initialize dark mode immediately to prevent flash of unstyled content
-  const darkModePreference = localStorage.getItem("darkMode");
-  if (darkModePreference === "enabled") {
-    document.body.classList.add("dark-mode");
-    themeIcon.textContent = "☀️";
-    themeToggle.setAttribute("aria-label", "Switch to light mode");
+  if (themeToggle && themeIcon) {
+    const darkModePreference = localStorage.getItem("darkMode");
+    if (darkModePreference === "enabled") {
+      document.body.classList.add("dark-mode");
+      themeIcon.textContent = "☀️";
+      themeToggle.setAttribute("aria-label", "Switch to light mode");
+    }
   }
 
   // Activity categories with corresponding colors
@@ -871,14 +873,18 @@ document.addEventListener("DOMContentLoaded", () => {
   function toggleDarkMode() {
     const isDarkMode = document.body.classList.toggle("dark-mode");
     // Update icon and aria-label
-    themeIcon.textContent = isDarkMode ? "☀️" : "🌙";
-    themeToggle.setAttribute("aria-label", isDarkMode ? "Switch to light mode" : "Switch to dark mode");
+    if (themeIcon && themeToggle) {
+      themeIcon.textContent = isDarkMode ? "☀️" : "🌙";
+      themeToggle.setAttribute("aria-label", isDarkMode ? "Switch to light mode" : "Switch to dark mode");
+    }
     // Save preference to localStorage
     localStorage.setItem("darkMode", isDarkMode ? "enabled" : "disabled");
   }
 
   // Add event listener for theme toggle
-  themeToggle.addEventListener("click", toggleDarkMode);
+  if (themeToggle) {
+    themeToggle.addEventListener("click", toggleDarkMode);
+  }
 
   // Expose filter functions to window for future UI control
   window.activityFilters = {

@@ -717,6 +717,7 @@ footer {
 }
 
 /* Adjust user controls position when theme toggle is present */
+/* Note: 70px offset accounts for theme toggle button width + spacing */
 #user-controls {
   right: 70px;
 }
