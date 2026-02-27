@@ -531,7 +531,8 @@ document.addEventListener("DOMContentLoaded", () => {
           </span>
         `;
       } else {
-        console.warn(`Activity "${name}" has invalid difficulty value: "${details.difficulty}". Valid values are: ${Object.keys(difficultyLevels).join(', ')}`);
+        // Log warning for developers if invalid difficulty value is found
+        console.warn(`Invalid difficulty level for "${name}": "${details.difficulty}"`);
       }
     }
 
