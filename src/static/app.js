@@ -474,7 +474,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Helper function to encode HTML entities for safe attribute values
   function encodeHtmlAttribute(str) {
-    return str.replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
 
   // Function to render a single activity card
@@ -576,13 +576,13 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
       <div class="share-buttons">
         <span class="share-label">Share:</span>
-        <button class="share-button share-facebook" data-activity="${name}" data-description="${encodeHtmlAttribute(details.description)}" title="Share on Facebook" aria-label="Share on Facebook">
+        <button class="share-button share-facebook" data-activity="${encodeHtmlAttribute(name)}" data-description="${encodeHtmlAttribute(details.description)}" title="Share on Facebook" aria-label="Share on Facebook">
           <span>📘</span>
         </button>
-        <button class="share-button share-twitter" data-activity="${name}" data-description="${encodeHtmlAttribute(details.description)}" title="Share on Twitter" aria-label="Share on Twitter">
+        <button class="share-button share-twitter" data-activity="${encodeHtmlAttribute(name)}" data-description="${encodeHtmlAttribute(details.description)}" title="Share on Twitter" aria-label="Share on Twitter">
           <span>🐦</span>
         </button>
-        <button class="share-button share-email" data-activity="${name}" data-description="${encodeHtmlAttribute(details.description)}" title="Share via Email" aria-label="Share via Email">
+        <button class="share-button share-email" data-activity="${encodeHtmlAttribute(name)}" data-description="${encodeHtmlAttribute(details.description)}" title="Share via Email" aria-label="Share via Email">
           <span>✉️</span>
         </button>
       </div>
