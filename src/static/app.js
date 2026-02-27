@@ -26,6 +26,20 @@ document.addEventListener("DOMContentLoaded", () => {
   const closeLoginModal = document.querySelector(".close-login-modal");
   const loginMessage = document.getElementById("login-message");
 
+  // Dark mode elements
+  const themeToggle = document.getElementById("theme-toggle");
+  const themeIcon = document.getElementById("theme-icon");
+
+  // Initialize dark mode immediately to prevent flash of unstyled content
+  if (themeToggle && themeIcon) {
+    const darkModePreference = localStorage.getItem("darkMode");
+    if (darkModePreference === "enabled") {
+      document.body.classList.add("dark-mode");
+      themeIcon.textContent = "☀️";
+      themeToggle.setAttribute("aria-label", "Switch to light mode");
+    }
+  }
+
   // Activity categories with corresponding colors
   const activityTypes = {
     sports: { label: "Sports", color: "#e8f5e9", textColor: "#2e7d32" },
@@ -486,6 +500,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Helper function to encode HTML entities for safe attribute values
+  function encodeHtmlAttribute(str) {
+    return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
   // Function to render a single activity card
   function renderActivityCard(name, details) {
     const activityCard = document.createElement("div");
@@ -600,6 +619,18 @@ document.addEventListener("DOMContentLoaded", () => {
         `
         }
       </div>
+      <div class="share-buttons">
+        <span class="share-label">Share:</span>
+        <button class="share-button share-facebook" data-activity="${encodeHtmlAttribute(name)}" data-description="${encodeHtmlAttribute(details.description)}" title="Share on Facebook" aria-label="Share on Facebook">
+          <span>📘</span>
+        </button>
+        <button class="share-button share-twitter" data-activity="${encodeHtmlAttribute(name)}" data-description="${encodeHtmlAttribute(details.description)}" title="Share on Twitter" aria-label="Share on Twitter">
+          <span>🐦</span>
+        </button>
+        <button class="share-button share-email" data-activity="${encodeHtmlAttribute(name)}" data-description="${encodeHtmlAttribute(details.description)}" title="Share via Email" aria-label="Share via Email">
+          <span>✉️</span>
+        </button>
+      </div>
     `;
 
     // Add click handlers for delete buttons
@@ -617,6 +648,12 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
     }
+
+    // Add click handlers for share buttons
+    const shareButtons = activityCard.querySelectorAll(".share-button");
+    shareButtons.forEach((button) => {
+      button.addEventListener("click", handleShare);
+    });
 
     activitiesList.appendChild(activityCard);
   }
@@ -796,6 +833,47 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Handle social sharing
+  function handleShare(event) {
+    const button = event.currentTarget;
+    // Get the encoded values from data attributes
+    const encodedActivityName = button.dataset.activity;
+    const encodedActivityDescription = button.dataset.description;
+    
+    // Decode HTML entities for display in share text
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = encodedActivityName;
+    const activityName = tempDiv.textContent;
+    tempDiv.innerHTML = encodedActivityDescription;
+    const activityDescription = tempDiv.textContent;
+    
+    // Create share URL (current page URL)
+    const shareUrl = window.location.href;
+    const shareText = `Check out ${activityName} at Mergington High School: ${activityDescription}`;
+    
+    if (button.classList.contains('share-facebook')) {
+      // Facebook share
+      const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+      window.open(facebookUrl, '_blank', 'width=600,height=400');
+    } else if (button.classList.contains('share-twitter')) {
+      // Twitter share
+      const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+      window.open(twitterUrl, '_blank', 'width=600,height=400');
+    } else if (button.classList.contains('share-email')) {
+      // Email share - use anchor element to avoid navigation
+      const subject = encodeURIComponent(`Activity: ${activityName}`);
+      const body = encodeURIComponent(`${shareText}\n\nView more at: ${shareUrl}`);
+      const mailtoLink = `mailto:?subject=${subject}&body=${body}`;
+      
+      const anchor = document.createElement('a');
+      anchor.href = mailtoLink;
+      anchor.style.display = 'none';
+      document.body.appendChild(anchor);
+      anchor.click();
+      document.body.removeChild(anchor);
+    }
+  }
+
   // Handle unregistration with confirmation
   async function handleUnregister(event) {
     // Check if user is authenticated
@@ -898,6 +976,23 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Error signing up:", error);
     }
   });
+
+  // Dark mode toggle functionality
+  function toggleDarkMode() {
+    const isDarkMode = document.body.classList.toggle("dark-mode");
+    // Update icon and aria-label
+    if (themeIcon && themeToggle) {
+      themeIcon.textContent = isDarkMode ? "☀️" : "🌙";
+      themeToggle.setAttribute("aria-label", isDarkMode ? "Switch to light mode" : "Switch to dark mode");
+    }
+    // Save preference to localStorage
+    localStorage.setItem("darkMode", isDarkMode ? "enabled" : "disabled");
+  }
+
+  // Add event listener for theme toggle
+  if (themeToggle) {
+    themeToggle.addEventListener("click", toggleDarkMode);
+  }
 
   // Expose filter functions to window for future UI control
   window.activityFilters = {
