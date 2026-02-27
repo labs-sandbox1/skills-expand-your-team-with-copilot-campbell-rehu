@@ -486,6 +486,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Helper function to encode HTML entities for safe attribute values
+  function encodeHtmlAttribute(str) {
+    return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
   // Function to render a single activity card
   function renderActivityCard(name, details) {
     const activityCard = document.createElement("div");
@@ -583,6 +588,18 @@ document.addEventListener("DOMContentLoaded", () => {
         `
         }
       </div>
+      <div class="share-buttons">
+        <span class="share-label">Share:</span>
+        <button class="share-button share-facebook" data-activity="${encodeHtmlAttribute(name)}" data-description="${encodeHtmlAttribute(details.description)}" title="Share on Facebook" aria-label="Share on Facebook">
+          <span>📘</span>
+        </button>
+        <button class="share-button share-twitter" data-activity="${encodeHtmlAttribute(name)}" data-description="${encodeHtmlAttribute(details.description)}" title="Share on Twitter" aria-label="Share on Twitter">
+          <span>🐦</span>
+        </button>
+        <button class="share-button share-email" data-activity="${encodeHtmlAttribute(name)}" data-description="${encodeHtmlAttribute(details.description)}" title="Share via Email" aria-label="Share via Email">
+          <span>✉️</span>
+        </button>
+      </div>
     `;
 
     // Add click handlers for delete buttons
@@ -600,6 +617,12 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
     }
+
+    // Add click handlers for share buttons
+    const shareButtons = activityCard.querySelectorAll(".share-button");
+    shareButtons.forEach((button) => {
+      button.addEventListener("click", handleShare);
+    });
 
     activitiesList.appendChild(activityCard);
   }
@@ -764,6 +787,47 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 300);
       }
     });
+  }
+
+  // Handle social sharing
+  function handleShare(event) {
+    const button = event.currentTarget;
+    // Get the encoded values from data attributes
+    const encodedActivityName = button.dataset.activity;
+    const encodedActivityDescription = button.dataset.description;
+    
+    // Decode HTML entities for display in share text
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = encodedActivityName;
+    const activityName = tempDiv.textContent;
+    tempDiv.innerHTML = encodedActivityDescription;
+    const activityDescription = tempDiv.textContent;
+    
+    // Create share URL (current page URL)
+    const shareUrl = window.location.href;
+    const shareText = `Check out ${activityName} at Mergington High School: ${activityDescription}`;
+    
+    if (button.classList.contains('share-facebook')) {
+      // Facebook share
+      const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+      window.open(facebookUrl, '_blank', 'width=600,height=400');
+    } else if (button.classList.contains('share-twitter')) {
+      // Twitter share
+      const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+      window.open(twitterUrl, '_blank', 'width=600,height=400');
+    } else if (button.classList.contains('share-email')) {
+      // Email share - use anchor element to avoid navigation
+      const subject = encodeURIComponent(`Activity: ${activityName}`);
+      const body = encodeURIComponent(`${shareText}\n\nView more at: ${shareUrl}`);
+      const mailtoLink = `mailto:?subject=${subject}&body=${body}`;
+      
+      const anchor = document.createElement('a');
+      anchor.href = mailtoLink;
+      anchor.style.display = 'none';
+      document.body.appendChild(anchor);
+      anchor.click();
+      document.body.removeChild(anchor);
+    }
   }
 
   // Handle unregistration with confirmation
