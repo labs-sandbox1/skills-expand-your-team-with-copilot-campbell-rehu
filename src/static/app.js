@@ -29,6 +29,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const themeToggle = document.getElementById("theme-toggle");
   const themeIcon = document.getElementById("theme-icon");
 
+  // Initialize dark mode immediately to prevent flash of unstyled content
+  const darkModePreference = localStorage.getItem("darkMode");
+  if (darkModePreference === "enabled") {
+    document.body.classList.add("dark-mode");
+    themeIcon.textContent = "☀️";
+    themeToggle.setAttribute("aria-label", "Switch to light mode");
+  }
+
   // Activity categories with corresponding colors
   const activityTypes = {
     sports: { label: "Sports", color: "#e8f5e9", textColor: "#2e7d32" },
@@ -869,16 +877,6 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem("darkMode", isDarkMode ? "enabled" : "disabled");
   }
 
-  // Initialize dark mode from localStorage
-  function initializeDarkMode() {
-    const darkModePreference = localStorage.getItem("darkMode");
-    if (darkModePreference === "enabled") {
-      document.body.classList.add("dark-mode");
-      themeIcon.textContent = "☀️";
-      themeToggle.setAttribute("aria-label", "Switch to light mode");
-    }
-  }
-
   // Add event listener for theme toggle
   themeToggle.addEventListener("click", toggleDarkMode);
 
@@ -889,7 +887,6 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // Initialize app
-  initializeDarkMode();
   checkAuthentication();
   initializeFilters();
   fetchActivities();
