@@ -696,6 +696,7 @@ footer {
 }
 
 /* Dark mode toggle button */
+/* Note: Absolutely positioned within header (which has position: relative) */
 #theme-toggle {
   position: absolute;
   top: 10px;
