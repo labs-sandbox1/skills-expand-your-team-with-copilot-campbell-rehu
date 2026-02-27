@@ -569,6 +569,18 @@ document.addEventListener("DOMContentLoaded", () => {
         `
         }
       </div>
+      <div class="share-buttons">
+        <span class="share-label">Share:</span>
+        <button class="share-button share-facebook" data-activity="${name}" data-description="${details.description.replace(/"/g, '&quot;')}" title="Share on Facebook">
+          <span>📘</span>
+        </button>
+        <button class="share-button share-twitter" data-activity="${name}" data-description="${details.description.replace(/"/g, '&quot;')}" title="Share on Twitter">
+          <span>🐦</span>
+        </button>
+        <button class="share-button share-email" data-activity="${name}" data-description="${details.description.replace(/"/g, '&quot;')}" title="Share via Email">
+          <span>✉️</span>
+        </button>
+      </div>
     `;
 
     // Add click handlers for delete buttons
@@ -586,6 +598,12 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
     }
+
+    // Add click handlers for share buttons
+    const shareButtons = activityCard.querySelectorAll(".share-button");
+    shareButtons.forEach((button) => {
+      button.addEventListener("click", handleShare);
+    });
 
     activitiesList.appendChild(activityCard);
   }
@@ -750,6 +768,32 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 300);
       }
     });
+  }
+
+  // Handle social sharing
+  function handleShare(event) {
+    const button = event.currentTarget;
+    const activityName = button.dataset.activity;
+    const activityDescription = button.dataset.description;
+    
+    // Create share URL (current page URL)
+    const shareUrl = window.location.href;
+    const shareText = `Check out ${activityName} at Mergington High School: ${activityDescription}`;
+    
+    if (button.classList.contains('share-facebook')) {
+      // Facebook share
+      const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+      window.open(facebookUrl, '_blank', 'width=600,height=400');
+    } else if (button.classList.contains('share-twitter')) {
+      // Twitter share
+      const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+      window.open(twitterUrl, '_blank', 'width=600,height=400');
+    } else if (button.classList.contains('share-email')) {
+      // Email share
+      const subject = encodeURIComponent(`Activity: ${activityName}`);
+      const body = encodeURIComponent(`${shareText}\n\nView more at: ${shareUrl}`);
+      window.location.href = `mailto:?subject=${subject}&body=${body}`;
+    }
   }
 
   // Handle unregistration with confirmation
