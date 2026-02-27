@@ -862,8 +862,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // Dark mode toggle functionality
   function toggleDarkMode() {
     const isDarkMode = document.body.classList.toggle("dark-mode");
-    // Update icon
+    // Update icon and aria-label
     themeIcon.textContent = isDarkMode ? "☀️" : "🌙";
+    themeToggle.setAttribute("aria-label", isDarkMode ? "Switch to light mode" : "Switch to dark mode");
     // Save preference to localStorage
     localStorage.setItem("darkMode", isDarkMode ? "enabled" : "disabled");
   }
@@ -874,6 +875,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (darkModePreference === "enabled") {
       document.body.classList.add("dark-mode");
       themeIcon.textContent = "☀️";
+      themeToggle.setAttribute("aria-label", "Switch to light mode");
     }
   }
 
